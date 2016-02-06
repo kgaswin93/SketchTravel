@@ -59,6 +59,13 @@ if (Meteor.isClient) {
     }
   });
 
+  Template.travelForm.events({
+    "click .travelFormSubmit": function () {
+      // Set the checked property to the opposite of its current value
+      alert("hello");
+    }
+  });
+
   Accounts.ui.config({
     passwordSignupFields: "USERNAME_ONLY"
   });
