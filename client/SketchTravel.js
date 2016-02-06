@@ -1,61 +1,75 @@
 
 if (Meteor.isClient) {
+
+  var MAP_ZOOM = 15;
+
+  Meteor.startup(function() {
+    GoogleMaps.load();
+  });
+
+  Template.map.onCreated(function() {
+    var self = this;
+
+    GoogleMaps.ready('map', function(map) {
+      var marker;
+
+      // Create and move the marker when latLng changes.
+      self.autorun(function() {
+        var latLng = Geolocation.latLng();
+        if (! latLng)
+          return;
+
+        // If the marker doesn't yet exist, create it.
+        if (! marker) {
+          marker = new google.maps.Marker({
+            position: new google.maps.LatLng(latLng.lat, latLng.lng),
+            map: map.instance
+          });
+        }
+        // The marker already exists, so we'll just change its position.
+        else {
+          marker.setPosition(latLng);
+        }
+
+        // Center and zoom the map view onto the current position.
+        map.instance.setCenter(marker.getPosition());
+        map.instance.setZoom(MAP_ZOOM);
+      });
+    });
+  });
+
+  Template.map.helpers({
+    geolocationError: function() {
+      var error = Geolocation.error();
+      return error && error.message;
+    },
+    mapOptions: function() {
+      var latLng = Geolocation.latLng();
+      // Initialize the map once we have the latLng.
+      if (GoogleMaps.loaded() && latLng) {
+        return {
+          center: new google.maps.LatLng(latLng.lat, latLng.lng),
+          zoom: MAP_ZOOM
+        };
+      }
+    }
+  });
+
   // This code only runs on the client
   Meteor.subscribe("tasks");
 
   Template.body.helpers({
-    tasks: function () {
-      if (Session.get("hideCompleted")) {
-        // If hide completed is checked, filter tasks
-        return Tasks.find({checked: {$ne: true}}, {sort: {createdAt: -1}});
-      } else {
-        // Otherwise, return all of the tasks
-        return Tasks.find({}, {sort: {createdAt: -1}});
-      }
-    },
-    hideCompleted: function () {
-      return Session.get("hideCompleted");
-    },
-    incompleteCount: function () {
-      return Tasks.find({checked: {$ne: true}}).count();
-    }
+
   });
 
   Template.body.events({
-    "submit .new-task": function (event) {
-      // Prevent default browser form submit
-      event.preventDefault();
 
-      // Get value from form element
-      var text = event.target.text.value;
-
-      // Insert a task into the collection
-      Meteor.call("addTask", text);
-
-      // Clear form
-      event.target.text.value = "";
-    },
-    "change .hide-completed input": function (event) {
-      Session.set("hideCompleted", event.target.checked);
-    }
   });
 
-  Template.task.helpers({
-    isOwner: function () {
-      return this.owner === Meteor.userId();
-    }
-  });
-
-  Template.task.events({
-    "click .toggle-checked": function () {
+  Template.travelForm.events({
+    "click .travelFormSubmit": function () {
       // Set the checked property to the opposite of its current value
-      Meteor.call("setChecked", this._id, ! this.checked);
-    },
-    "click .delete": function () {
-      Meteor.call("deleteTask", this._id);
-    },
-    "click .toggle-private": function () {
-      Meteor.call("setPrivate", this._id, ! this.private);
+      alert("hello");
     }
   });
 

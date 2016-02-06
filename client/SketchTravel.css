@@ -124,3 +124,9 @@ header .hide-completed {
     padding-bottom: 5px;
   }
 }
+.map-container {
+  width: 400px;
+  margin: 0 auto;
+  max-width: 100%;
+  height: 500px;
+}
