@@ -9,7 +9,6 @@ if (Meteor.isClient) {
   var startTime = null;
   var duration = 0;
   var sampler = 0;
-  var searchType = "car_repair";
 
   var MAP_ZOOM = 15;
 
@@ -25,12 +24,6 @@ if (Meteor.isClient) {
   });
 
   Template.body.events({
-    "submit .typeSearch": function (event,template){
-      searchType = template.find(".type").value;
-      directionsDisplay = new google.maps.DirectionsRenderer();
-      Template.map_canvas.getdirection(fromPlace,toPlace);
-      return false;
-    }
 
   });
 
@@ -38,7 +31,7 @@ if (Meteor.isClient) {
     "click .travelFormSubmit": function (event, template) {
       // Set the checked property to the opposite of its current value
       //alert(template.find(".fromPlace").value);
-      Template.map_canvas.getdirection(template.find(".fromPlace").value,template.find(".toPlace").value);
+      Template.map_canvas.getdirection(template.find(".fromPlace").value,template.find(".toPlace").value,template.find(".type").value);
       fromPlace = template.find(".fromPlace").value;
       toPlace = template.find(".toPlace").value;
       sampler = template.find(".sampler").value;
@@ -84,7 +77,7 @@ if (Meteor.isClient) {
       });
   });
 
-  Template.map_canvas.getdirection = function(start,end) {
+  Template.map_canvas.getdirection = function(start,end,type) {
     directionsService = new google.maps.DirectionsService();
         var request = {
             origin:start,
@@ -98,7 +91,8 @@ if (Meteor.isClient) {
             var path = response.routes[0].overview_path;
             var boxes = routeBoxer.box(path, sampler);
             Template.map_canvas.drawBoxes(boxes);
-            Template.map_canvas.findPlaces(boxes,0,searchType);
+            alert(type);
+            Template.map_canvas.findPlaces(boxes,0,type);
           }
         });
   }
@@ -157,7 +151,7 @@ Template.map_canvas.findPlaces = function(boxes,searchIndex,searchType) {
    }
    searchIndex++;
    if (searchIndex < boxes.length)
-     Template.map_canvas.findPlaces(boxes,searchIndex);
+     Template.map_canvas.findPlaces(boxes,searchIndex,searchType);
    });
 }
 
