@@ -26,8 +26,11 @@
 </head>
 <!--Comment to test push-->
 <body>
-  <div class = "core">
-  <input type="text" name="startTime" placeholder="Search" />
+  <div class = "core" >
+    <form class="typeSearch" hidden>
+  <input type="text" class="type" name="search" placeholder="Search" />
+  </form>
+
   {{> map_canvas}}
   <div id="footer"> nitTwit (C) MIT Licensed</div>
   </div>
@@ -54,7 +57,7 @@
     <input type="text" class="fromPlace" placeholder="Source" />
     <input type="text" class="toPlace" placeholder="Destination" />
     <input type="text" class="startTime" placeholder="Start Time" />
-    <input type="text" class="endTime" placeholder="Reach Time" />
+    <input type="text" class="sampler" placeholder="sampler" />
     <input type="submit" class="travelFormSubmit" value="Sketch it !">
 
 
