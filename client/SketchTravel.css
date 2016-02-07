@@ -9,17 +9,27 @@ body {
   top: 0;
   bottom: 0;
   left: 0;
-  right: 0;
+  right: 0px;
 
   padding: 0;
   margin: 0;
 
   font-size: 14px;
 }
+.ui-datepicker-trigger { position:relative;top:8px ;left:5px ; bottom:0px ;height:25px }
+ /* {} is the value according to your need */
+
+ .core{
+    float: right;
+	max-width: 1500px;
+	top: 25px;
+	min-height: 50%;
+	background: #F0F0F0;
+}
 
 .container {
-  max-width: 600px;
-  margin: 0 auto;
+  max-width: 400px;
+  float:left;
   min-height: 100%;
   background: white;
 }
@@ -27,13 +37,26 @@ body {
 header {
   background: #d2edf4;
   background-image: linear-gradient(to bottom, #d0edf5, #e1e5f0 100%);
-  padding: 20px 15px 15px 15px;
+  text-align: center;
+  padding: 20px 35px 15px 35px;
   position: relative;
 }
 
 #login-buttons {
   display: block;
 }
+
+#footer {
+    position : absolute;
+    bottom : 0;
+	right: 0;
+	width: 965px;
+    height : 100px;
+    margin-top : 40px;
+	text-align: bottom-right;
+	background: #F0F0F0;
+}
+
 
 h1 {
   font-size: 1.5em;
@@ -49,17 +72,48 @@ form {
   position: relative;
 }
 
-.new-task input {
+.core input {
   box-sizing: border-box;
   padding: 10px 0;
   background: transparent;
-  border: none;
-  width: 100%;
+  border: solid;
+  border-width: thin;
+  margin-left: 35px;
+  width: 80%;
   padding-right: 80px;
   font-size: 1em;
 }
 
-.new-task input:focus{
+.update-task input {
+  box-sizing: border-box;
+  padding: 10px 0;
+  background: transparent;
+  border: solid;
+  border-width: thin;
+  margin-left: 35px;
+  width: 80%;
+  padding-right: 80px;
+  font-size: 1em;
+}
+
+.update-task input[type=submit] {
+width: 90px;
+padding: 1px;
+position: absolute;
+left: 120px;
+top: 475px;
+background: #09c;
+color: #fff;
+font-family: tahoma,geneva,algerian;
+height: 20px;
+text-align:center;
+-webkit-border-radius: 10px;
+-moz-border-radius: 10px;
+border-radius: 15px;
+border: 1px solid #999;
+}
+
+.update-task input:focus{
   outline: 0;
 }
 
@@ -125,7 +179,8 @@ header .hide-completed {
   }
 }
 .map-container {
-  width: 400px;
+  width: 962px;
+  top: 150px;
   margin: 0 auto;
   max-width: 100%;
   height: 500px;
