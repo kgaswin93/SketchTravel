@@ -9,6 +9,7 @@ if (Meteor.isClient) {
   var startTime = null;
   var duration = 0;
   var sampler = 0;
+  var infowindow = null;
 
   var MAP_ZOOM = 15;
 
@@ -48,6 +49,7 @@ if (Meteor.isClient) {
   Template.map_canvas.onCreated(function() {
     self = this;
       directionsDisplay = new google.maps.DirectionsRenderer();
+      infowindow = new google.maps.InfoWindow();
       // Create and move the marker when latLng changes.
         routeBoxer = new RouteBoxer();
         self.autorun(function() {
@@ -79,6 +81,7 @@ if (Meteor.isClient) {
 
   Template.map_canvas.getdirection = function(start,end,type) {
     directionsService = new google.maps.DirectionsService();
+
         var request = {
             origin:start,
             destination:end,
@@ -179,7 +182,35 @@ Template.map_canvas.createMarker = function(place){
         icon: image,
         position:place.geometry.location
     });
+    var request =  {
+          reference: place.reference
+    };
+    var mapOptions = {
+      mapTypeId: google.maps.MapTypeId.ROADMAP,
+      zoom: 8
+    };
+    service = new google.maps.places.PlacesService(map);
+    google.maps.event.addListener(marker,'click',function(){
+        service.getDetails(request, function(place, status) {
+          if (status == google.maps.places.PlacesServiceStatus.OK) {
+            var contentStr = '<h5>'+place.name+'</h5><p>'+place.formatted_address;
+            if (!!place.formatted_phone_number) contentStr += '<br>'+place.formatted_phone_number;
+            if (!!place.website) contentStr += '<br><a target="_blank" href="'+place.website+'">'+place.website+'</a>';
+            contentStr += '<br>'+place.types+'</p>';
+            infowindow.setContent(contentStr);
+            infowindow.open(map,marker);
+          } else {
+            var contentStr = "<h5>No Result, status="+status+"</h5>";
+            infowindow.setContent(contentStr);
+            infowindow.open(map,marker);
+          }
+        });
+
+    });
     gmarkers.push(marker);
+    var side_bar_html = "<a href='javascript:google.maps.event.trigger(gmarkers["+parseInt(gmarkers.length-1)+"],\"click\");'>"+place.name+"</a><br>";
+    document.getElementById('side_bar').innerHTML += side_bar_html;
+
 }
 
 
