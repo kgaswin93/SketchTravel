@@ -1,61 +1,41 @@
 <head>
-  <title>Todo List</title>
+  <title>Make my travel</title>
+  <script type="text/javascript"
+     src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyAXmNqi4wgmBHkg50GtYvU2titeFQp1RJM&sensor=false">
+   </script>
 </head>
 <!--Comment to test push-->
 <body>
   <div class="container">
     <header>
-      <h1>Todo List ({{incompleteCount}})</h1>
+      <h1>Make my travel</h1>
 
-      <label class="hide-completed">
-        <input type="checkbox" checked="{{hideCompleted}}" />
-        Hide Completed Tasks
-      </label>
-
-      {{> loginButtons}}
-
-      {{#if currentUser}}
-        <form class="new-task">
-          <input type="text" name="text" placeholder="Type to add new tasks" />
-        </form>
-      {{/if}}
     </header>
     {{> travelForm}}
-    <ul>
-      {{#each tasks}}
-        {{> task}}
-      {{/each}}
-    </ul>
+
+    {{> map_canvas}}
+
+
   </div>
 </body>
 
-<template name="task">
-  <li class="{{#if checked}}checked{{/if}} {{#if private}}private{{/if}}">
-    <button class="delete">&times;</button>
 
-    <input type="checkbox" checked="{{checked}}" class="toggle-checked" />
-
-    {{#if isOwner}}
-      <button class="toggle-private">
-        {{#if private}}
-          Private
-        {{else}}
-          Public
-        {{/if}}
-      </button>
-    {{/if}}
-
-    <span class="text"><strong>{{username}}</strong> - {{text}}</span>
-  </li>
-</template>
 
 <template name="travelForm">
-  <form class="travel-form">
-    <input type="text" name="fromPlace" placeholder="fromPlace" />
-    <input type="text" name="toPlace" placeholder="toPlace" />
-    <input type="text" name="fromDate" placeholder="fromDate" />
-    <input type="text" name="toDate" placeholder="toDate" />
-    <input type="text" name="startTime" placeholder="startTime" />
+  <form class="update-task">
+    <input type="text" class="fromPlace" placeholder="fromPlace" />
+    <input type="text" class="toPlace" placeholder="toPlace" />
+    <input type="text" name="fromDate" placeholder="Type to add new tasks" />
+    <input type="text" name="toDate" placeholder="Type to add new tasks" />
+    <input type="text" name="startTime" placeholder="Type to add new tasks" />
     <input type="submit" class="travelFormSubmit" value="Sketch it !">
+
+
   </form>
+</template>
+
+<template name="map_canvas">
+  <div class="map-container">
+      <div id="map_canvas" style="width:100%; height:100%"></div>
+  </div>
 </template>
