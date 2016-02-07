@@ -1,8 +1,9 @@
 <head>
   <title>Make my travel</title>
   <script type="text/javascript"
-     src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyAXmNqi4wgmBHkg50GtYvU2titeFQp1RJM&sensor=false">
+     src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyAXmNqi4wgmBHkg50GtYvU2titeFQp1RJM&sensor=false&libraries=places">
    </script>
+   <script src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/routeboxer/src/RouteBoxer.js" type="text/javascript"></script>
 </head>
 <!--Comment to test push-->
 <body>
@@ -14,6 +15,8 @@
     {{> travelForm}}
 
     {{> map_canvas}}
+
+    {{> map_canvas1}}
 
 
   </div>
@@ -37,5 +40,11 @@
 <template name="map_canvas">
   <div class="map-container">
       <div id="map_canvas" style="width:100%; height:100%"></div>
+  </div>
+</template>
+
+<template name="map_canvas1">
+  <div class="map-container1">
+      <div id="map_canvas1" style="width:100%; height:100%" hidden></div>
   </div>
 </template>

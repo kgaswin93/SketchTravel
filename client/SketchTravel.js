@@ -2,8 +2,10 @@
 if (Meteor.isClient) {
 
   var directionsDisplay;
-  var directionsService;
+  //var directionsService;
   var map;
+  var routeBoxer = null;
+  var gmarkers = [];
 
   var MAP_ZOOM = 15;
 
@@ -40,7 +42,7 @@ if (Meteor.isClient) {
     self = this;
       directionsDisplay = new google.maps.DirectionsRenderer();
       // Create and move the marker when latLng changes.
-
+        routeBoxer = new RouteBoxer();
         self.autorun(function() {
         var latLng = Geolocation.latLng();
         if (! latLng)
@@ -51,9 +53,11 @@ if (Meteor.isClient) {
             zoom: 10,
             mapTypeId: google.maps.MapTypeId.ROADMAP
           };
-          var map = new google.maps.Map(document.getElementById("map_canvas"),mapOptions);
+          map = new google.maps.Map(document.getElementById("map_canvas"),mapOptions);
           directionsDisplay.setMap(map);
 
+          directionService = new google.maps.DirectionsService();
+          directionsRenderer = new google.maps.DirectionsRenderer({ map: map });
           var marker = new google.maps.Marker({
                   position: latLng,
                   setMap: map_canvas,
@@ -75,7 +79,98 @@ if (Meteor.isClient) {
         directionsService.route(request, function(response, status) {
           if (status == google.maps.DirectionsStatus.OK) {
             directionsDisplay.setDirections(response);
+            var path = response.routes[0].overview_path;
+            var boxes = routeBoxer.box(path, 3);
+            Template.map_canvas.drawBoxes(boxes);
+            Template.map_canvas.findPlaces(boxes,0);
           }
         });
   }
+
+    Template.map_canvas.getPlaceDetails = function(placeId) {
+      var mapOptions = {
+        mapTypeId: google.maps.MapTypeId.ROADMAP,
+        zoom: 8
+      };
+      var map1 = new google.maps.Map(document.getElementById("map_canvas1"), mapOptions);
+      var service = new google.maps.places.PlacesService(map1);
+      var request = {
+        placeId: placeId
+      };
+       service.getDetails(request, function (results, status) {
+       });
+    }
+
+    // Draw the array of boxes as polylines on the map
+ Template.map_canvas.drawBoxes = function(boxes) {
+  boxpolys = new Array(boxes.length);
+  for (var i = 0; i < boxes.length; i++) {
+    boxpolys[i] = new google.maps.Rectangle({
+      bounds: boxes[i],
+      fillOpacity: 0,
+      strokeOpacity: 1.0,
+      strokeColor: '#000000',
+      strokeWeight: 1,
+      map: map
+    });
+  }
+}
+
+
+Template.map_canvas.findPlaces = function(boxes,searchIndex) {
+   var request = {
+       bounds: boxes[searchIndex],
+       types: ["petrol"]
+   };
+   // alert(request.bounds);
+   var mapOptions = {
+     mapTypeId: google.maps.MapTypeId.ROADMAP,
+     zoom: 8
+   };
+   var service = new google.maps.places.PlacesService(map);
+   service.radarSearch(request, function (results, status) {
+   if (status != google.maps.places.PlacesServiceStatus.OK) {
+     return;
+   }
+   for (var i = 0, result; result = results[i]; i++) {
+     var marker = Template.map_canvas.createMarker(result);
+   }
+   searchIndex++;
+   if (searchIndex < boxes.length)
+     Template.map_canvas.findPlaces(boxes,searchIndex);
+   });
+}
+
+// Clear boxes currently on the map
+ Template.map_canvas.clearBoxes = function() {
+  if (boxpolys != null) {
+    for (var i = 0; i < boxpolys.length; i++) {
+      boxpolys[i].setMap(null);
+    }
+  }
+  boxpolys = null;
+}
+
+Template.map_canvas.createMarker = function(place){
+    var placeLoc=place.geometry.location;
+    if (place.icon) {
+      var image = new google.maps.MarkerImage(
+                place.icon, new google.maps.Size(71, 71),
+                new google.maps.Point(0, 0), new google.maps.Point(17, 34),
+                new google.maps.Size(25, 25));
+     } else var image = null;
+
+    var marker=new google.maps.Marker({
+        map:map,
+        icon: image,
+        position:place.geometry.location
+    });
+    gmarkers.push(marker);
+}
+
+
+
+
+
+
 }
