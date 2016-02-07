@@ -6,6 +6,8 @@ if (Meteor.isClient) {
   var map;
   var routeBoxer = null;
   var gmarkers = [];
+  var startTime = null;
+  var duration = 0;
 
   var MAP_ZOOM = 15;
 
@@ -29,6 +31,7 @@ if (Meteor.isClient) {
       // Set the checked property to the opposite of its current value
       //alert(template.find(".fromPlace").value);
       Template.map_canvas.getdirection(template.find(".fromPlace").value,template.find(".toPlace").value);
+      startTime = template.find(".startTime").value;
       return false;
     }
   });
@@ -79,6 +82,7 @@ if (Meteor.isClient) {
         directionsService.route(request, function(response, status) {
           if (status == google.maps.DirectionsStatus.OK) {
             directionsDisplay.setDirections(response);
+            duration = response.routes[0].legs[0].duration.value/3600;;
             var path = response.routes[0].overview_path;
             var boxes = routeBoxer.box(path, 3);
             Template.map_canvas.drawBoxes(boxes);
@@ -87,7 +91,9 @@ if (Meteor.isClient) {
         });
   }
 
-    Template.map_canvas.getPlaceDetails = function(placeId) {
+    Template.map_canvas.testPlaceDetails = function(placeId,startTime,endTime) {
+      console.log(startTime+"asdfasd"+endTime);
+      /*
       var mapOptions = {
         mapTypeId: google.maps.MapTypeId.ROADMAP,
         zoom: 8
@@ -98,7 +104,8 @@ if (Meteor.isClient) {
         placeId: placeId
       };
        service.getDetails(request, function (results, status) {
-       });
+       });*/
+       return true;
     }
 
     // Draw the array of boxes as polylines on the map
@@ -132,7 +139,9 @@ Template.map_canvas.findPlaces = function(boxes,searchIndex) {
    if (status != google.maps.places.PlacesServiceStatus.OK) {
      return;
    }
+   var endTime = parseInt(startTime) + duration;
    for (var i = 0, result; result = results[i]; i++) {
+     if(Template.map_canvas.testPlaceDetails(result.place_id,startTime,endTime))
      var marker = Template.map_canvas.createMarker(result);
    }
    searchIndex++;
